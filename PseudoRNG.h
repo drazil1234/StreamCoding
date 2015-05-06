@@ -1,9 +1,17 @@
 #pragma once
 
+#include <string>
+
 class PseudoRNG
 {
-    public :
-        PseudoRNG() ;
-        uint64_t Next(uint64_t rangeMax) ;
-        bool Initialize(uint64_t seed) ;
+    public:
+        PseudoRNG(std::string seed) ;
+        uint64_t Next(uint8_t bits) ;
+        void Initialize(std::string seed) ;
+        bool Qualify() ;
+    private:
+        uint8_t _i, _j ;
+        uint8_t _NextByte() ;
+        uint8_t _S[256] ;
 } ;
+

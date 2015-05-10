@@ -1,13 +1,26 @@
 CXX = clang++
 CXXFLAGS = -Wall -Wextra -std=c++11 -O2
 OBJS = 
+GTESTFLAGS = gtest.o -lpthread
 
-.PHONY: clean
+.PHONY: clean runtest
 
 all: $(OBJS)
+
+test: RNGTest
+
+RNGTest: RNGTest.cpp gtest.o
+	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) RNGTest.cpp -o RNGTest
+
+runtest: test
+	./RNGTest
+
+gtest.o: gtest/gtest-all.cc gtest/gtest.h
+	$(CXX) $(CXXFLAGS) -pthread gtest/gtest-all.cc -c -o test.o
 
 %.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	rm *.o
+	-rm *.o
+	-rm  RNGTest

@@ -16,7 +16,7 @@ runtest: test
 	./RNGTest
 
 gtest.o: gtest/gtest-all.cc gtest/gtest.h
-	$(CXX) $(CXXFLAGS) -pthread gtest/gtest-all.cc -c -o test.o
+	$(CXX) $(CXXFLAGS) -isystem . -pthread gtest/gtest-all.cc -c -o gtest.o
 
 %.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

@@ -1,13 +1,43 @@
 #include "gtest/gtest.h"
 
-TEST (TEST1, Test1_1)
+TEST(AESCTR, EncryptShort)
 {
-    ASSERT_EQ(1,1) ;
 }
 
-TEST (TEST1, TEST1_2)
+TEST(AESCTR, EncryptLong)
 {
-    EXPECT_EQ(1,1) ;
+}
+
+TEST(AESCTR, TwoWayShort)
+{
+}
+
+TEST(AESCTR, TwoWayLong)
+{
+}
+
+TEST(AESCTR, Reseed)
+{
+}
+
+TEST(RNGTester, BadRNG)
+{
+}
+
+TEST(RNGTester, GoodRNG)
+{
+}
+
+TEST(DRNG, Randomness)
+{
+}
+
+TEST(DRNG, MinMaxValues)
+{
+}
+
+TEST(DRNG, RandomnessAfterReseed)
+{
 }
 
 int main(int argc, char **argv)

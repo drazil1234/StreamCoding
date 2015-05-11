@@ -34,7 +34,7 @@ class AESCTRTest : public ::testing::TestWithParam<AESCTRTestCase>
         std::vector<uint8_t> Decode(std::string str)
         {
             std::vector<uint8_t> vec ;
-            for(int i=0;i<(int)str.length();i+=2)
+            for(int i=0;i+1<(int)str.length();i+=2)
             {
                 vec.push_back(this->getVal(str[i])*16+this->getVal(str[i+1])) ;
             }
@@ -61,6 +61,19 @@ TEST_P(AESCTRTest, EncryptDecrypt)
 }
 
 INSTANTIATE_TEST_CASE_P(AESCTRTest, AESCTRTest, ::testing::ValuesIn(AESCTRTestVectors)) ;
+
+TEST_F(AESCTRTest, WrongKeyLength)
+{
+    ASSERT_THROW(AES(this->Decode(""), this->Decode(""), BlockCipher::Mode::CTR), std::string) ;
+    ASSERT_THROW(AES(this->Decode(""), this->Decode(""), BlockCipher::Mode::CTR), std::string) ;
+}
+
+TEST_F(AESCTRTest, IvLengths)
+{
+    ASSERT_NO_THROW(AES(this->Decode("01234567890123456789012345678901"), this->Decode(""), BlockCipher::Mode::CTR)) ;
+    ASSERT_NO_THROW(AES(this->Decode("01234567890123456789012345678901"), this->Decode("012345"), BlockCipher::Mode::CTR)) ;
+    ASSERT_NO_THROW(AES(this->Decode("01234567890123456789012345678901"), this->Decode("01234567890123456789012345678901234567890123456789"), BlockCipher::Mode::CTR)) ;
+}
 
 TEST(RNGTester, BadRNG)
 {

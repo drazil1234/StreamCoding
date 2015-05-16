@@ -87,6 +87,13 @@ TEST(AESTest, WrongInputBlockSize)
     ASSERT_THROW(aes.Encode(Decode("0123456789012345678901234567890123456789012345678901234567890123456789")), std::string) ;
 }
 
+TEST(AESTest, BlockSize)
+{
+    AES aes(Decode(AESCTRTestVectors[0].key)) ;
+    ASSERT_EQ((size_t)16, aes.InputSize()) ;
+    ASSERT_EQ((size_t)16, aes.OutputSize()) ;
+}
+
 TEST(RNGTester, BadRNG)
 {
 }

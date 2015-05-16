@@ -215,3 +215,13 @@ void AES::_KeyExpansion(std::vector<uint8_t> key) throw(std::string)
     }
 }
 
+size_t AES::InputSize()
+{
+    return 16 ;
+}
+
+size_t AES::OutputSize()
+{
+    return 16 ;
+}
+

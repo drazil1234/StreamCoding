@@ -6,7 +6,7 @@
 #include <string>
 #include <algorithm>
 
-struct AESCTRTestCase
+struct AESTestCase
 {
     std::string key, iv ;
     std::vector<std::string> plain, cipher ;
@@ -28,51 +28,63 @@ struct AESCTRTestCase
     }
 } ;
 
-class AESCTRTest : public ::testing::TestWithParam<AESCTRTestCase>
+uint8_t getVal(char ch)
+{
+    if('0' <= ch && ch <= '9') return (uint8_t)(ch-'0') ;
+    else return (uint8_t)(ch-'a')+10 ;
+}
+
+std::vector<uint8_t> Decode(std::string str)
+{
+    std::vector<uint8_t> vec ;
+    for(int i=0;i+1<(int)str.length();i+=2)
+    {
+        vec.push_back(getVal(str[i])*16+getVal(str[i+1])) ;
+    }
+    return vec ;
+}
+
+class AESTest : public ::testing::TestWithParam<AESTestCase>
 {
     protected:
-        std::vector<uint8_t> Decode(std::string str)
-        {
-            std::vector<uint8_t> vec ;
-            for(int i=0;i+1<(int)str.length();i+=2)
-            {
-                vec.push_back(this->getVal(str[i])*16+this->getVal(str[i+1])) ;
-            }
-            return vec ;
-        }
-        uint8_t getVal(char ch)
-        {
-            if('0' <= ch && ch <= '9') return (uint8_t)(ch-'0') ;
-            else return (uint8_t)(ch-'a')+10 ;
-        }
 } ;
 
-TEST_P(AESCTRTest, EncryptDecrypt)
+TEST_P(AESTest, EncryptDecrypt)
 {
     int cases = std::min(GetParam().plain.size(), GetParam().cipher.size()) ;
     ASSERT_GT(cases, 0) << "No plain/cipher to test" ;
-    AES aesEncode(this->Decode(GetParam().key), this->Decode(GetParam().iv), BlockCipher::Mode::CTR) ;
-    AES aesDecode(this->Decode(GetParam().key), this->Decode(GetParam().iv), BlockCipher::Mode::CTR) ;
+    AES aes(Decode(GetParam().key)) ;
+    std::vector<uint8_t> plain = Decode(GetParam().iv) ;
     for(int i=0;i<cases;i++)
     {
-        ASSERT_EQ(this->Decode(GetParam().cipher[i]), aesEncode.Encode(this->Decode(GetParam().plain[i]))) << "AES-CTR Encode fail" ;
-        ASSERT_EQ(this->Decode(GetParam().plain[i]), aesDecode.Decode(this->Decode(GetParam().cipher[i]))) << "AES-CTR Decode fail" ;
+        std::vector<uint8_t> cipher = aes.Encode(plain) ;
+        ASSERT_EQ(cipher.size(), (size_t)16) << "Incorrect OutputBlockSize." ;
+        
+        //increase CTR
+        for(int j=15;j>=0;j--)
+            if((++plain[j])!=0)
+                break ;
+
+        for(int j=0;j<16;j++)
+            ASSERT_EQ(Decode(GetParam().cipher[i])[j], cipher[j]^Decode(GetParam().plain[i])[j]) << "AES Encode fail" ;
     }
 }
 
-INSTANTIATE_TEST_CASE_P(AESCTRTest, AESCTRTest, ::testing::ValuesIn(AESCTRTestVectors)) ;
+INSTANTIATE_TEST_CASE_P(AESTest, AESTest, ::testing::ValuesIn(AESCTRTestVectors)) ;
 
-TEST_F(AESCTRTest, WrongKeyLength)
+TEST(AESTest, WrongKeyLength)
 {
-    ASSERT_THROW(AES(this->Decode(""), this->Decode(""), BlockCipher::Mode::CTR), std::string) ;
-    ASSERT_THROW(AES(this->Decode(""), this->Decode(""), BlockCipher::Mode::CTR), std::string) ;
+    ASSERT_THROW(AES(Decode("")), std::string) ;
+    ASSERT_THROW(AES(Decode("01234567890123456789")), std::string) ;
+    ASSERT_THROW(AES(Decode("0123456789012345678901234567890123456789012345678901234567890123456789")), std::string) ;
 }
 
-TEST_F(AESCTRTest, IvLengths)
+TEST(AESTest, WrongInputBlockSize)
 {
-    ASSERT_NO_THROW(AES(this->Decode("01234567890123456789012345678901"), this->Decode(""), BlockCipher::Mode::CTR)) ;
-    ASSERT_NO_THROW(AES(this->Decode("01234567890123456789012345678901"), this->Decode("012345"), BlockCipher::Mode::CTR)) ;
-    ASSERT_NO_THROW(AES(this->Decode("01234567890123456789012345678901"), this->Decode("01234567890123456789012345678901234567890123456789"), BlockCipher::Mode::CTR)) ;
+    AES aes(Decode(AESCTRTestVectors[0].key)) ;
+    ASSERT_THROW(aes.Encode(Decode("")), std::string) ;
+    ASSERT_THROW(aes.Encode(Decode("01234567890123456789")), std::string) ;
+    ASSERT_THROW(aes.Encode(Decode("0123456789012345678901234567890123456789012345678901234567890123456789")), std::string) ;
 }
 
 TEST(RNGTester, BadRNG)

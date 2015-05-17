@@ -46,7 +46,6 @@ std::vector<uint8_t> Decode(std::string str)
 
 class AESTest : public ::testing::TestWithParam<AESTestCase>
 {
-    protected:
 } ;
 
 TEST_P(AESTest, EncryptDecrypt)
@@ -71,6 +70,46 @@ TEST_P(AESTest, EncryptDecrypt)
 }
 
 INSTANTIATE_TEST_CASE_P(AESTest, AESTest, ::testing::ValuesIn(AESCTRTestVectors)) ;
+
+class BlockCipherAdapter_AESCTR : public ::testing::TestWithParam<AESTestCase>
+{
+} ;
+
+TEST_P(BlockCipherAdapter_AESCTR, AESCTR)
+{
+    int cases = std::min(GetParam().plain.size(), GetParam().cipher.size()) ;
+    ASSERT_GT(cases, 0) << "No plain/cipher to test" ;
+    
+    AES aes(Decode(GetParam().key)) ;
+    BlockCipherAdapter adapter(&aes, Decode(GetParam().iv), BlockCipherAdapter::Mode::CTR) ;
+
+    for(int i=0;i<cases;i++)
+        ASSERT_EQ(Decode(GetParam().cipher[i]), adapter.Encode(Decode(GetParam().plain[i]))) ;
+}
+
+INSTANTIATE_TEST_CASE_P(BlockCipherAdapter_AESCTR, BlockCipherAdapter_AESCTR, ::testing::ValuesIn(AESCTRTestVectors)) ;
+
+TEST(BlockCipherAdapterTest, NULLAlgo)
+{
+    ASSERT_THROW(BlockCipherAdapter(NULL, Decode(AESCTRTestVectors[0].iv), BlockCipherAdapter::Mode::CTR), std::string) ;
+}
+
+TEST(BlockCipherAdapterTest, WrongIvLength)
+{
+    AES aes(Decode(AESCTRTestVectors[0].key)) ;
+    ASSERT_THROW(BlockCipherAdapter(&aes, Decode(""), BlockCipherAdapter::Mode::CTR), std::string) ;
+    ASSERT_THROW(BlockCipherAdapter(&aes, Decode("01234567890123456789"), BlockCipherAdapter::Mode::CTR), std::string) ;
+    ASSERT_THROW(BlockCipherAdapter(&aes, Decode("0123456789012345678901234567890123456789012345678901234567890123456789"), BlockCipherAdapter::Mode::CTR), std::string) ;
+}
+
+TEST(BlockCipherAdapterTest, WrongInputLength)
+{
+    AES aes(Decode(AESCTRTestVectors[0].key)) ;
+    BlockCipherAdapter adapter(&aes, Decode(AESCTRTestVectors[0].iv), BlockCipherAdapter::Mode::CTR) ;
+    ASSERT_THROW(adapter.Encode(Decode("")), std::string) ;
+    ASSERT_THROW(adapter.Encode(Decode("01234567890123456789")), std::string) ;
+    ASSERT_THROW(adapter.Encode(Decode("0123456789012345678901234567890123456789012345678901234567890123456789")), std::string) ;
+}
 
 TEST(AESTest, WrongKeyLength)
 {

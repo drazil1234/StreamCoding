@@ -17,12 +17,13 @@ struct BlockCipher
 struct BlockCipherAdapter
 {
     enum Mode {CTR} ;
-    BlockCipherAdapter(BlockCipher *algo, std::vector<uint8_t> iv, Mode mode, bool isStream) throw(std::string) ;
+    BlockCipherAdapter(BlockCipher *algo, std::vector<uint8_t> iv, Mode mode) throw(std::string) ;
     std::vector<uint8_t> Encode(std::vector<uint8_t> plain) throw(std::string) ;
     std::vector<uint8_t> Decode(std::vector<uint8_t> cipher) throw(std::string) ;
     private:
-        bool _isStream ;
         std::vector<uint8_t> _iv ;
+        Mode _mode ;
+        BlockCipher *_algo ;
 } ;
 
 

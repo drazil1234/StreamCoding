@@ -225,3 +225,57 @@ size_t AES::OutputSize()
     return 16 ;
 }
 
+BlockCipherAdapter::BlockCipherAdapter(BlockCipher *algo, std::vector<uint8_t> iv, Mode mode) throw(std::string)
+{
+    if(algo==NULL)
+        throw(std::string("Algo cannot be NULL.")) ;
+
+    switch(mode)
+    {
+        case Mode::CTR:
+            if(iv.size()!=algo->InputSize())
+                throw(std::string("Wrong iv size.")) ;
+            break ;
+        default:
+            throw(std::string("Mode not supported.")) ;
+            break ;
+    }
+
+    this->_iv = iv ;
+    this->_algo = algo ;
+    this->_mode = mode ;
+}
+
+std::vector<uint8_t> BlockCipherAdapter::Encode(std::vector<uint8_t> plain) throw(std::string)
+{
+    std::vector<uint8_t> cipher ;
+
+    switch(this->_mode)
+    {
+        case Mode::CTR:
+            if(plain.size()!=this->_algo->OutputSize())
+                throw(std::string("Wrong input size.")) ;
+
+            cipher = this->_algo->Encode(this->_iv) ;
+            for(int i=15;i>=0;i--)
+                if((++this->_iv[i])!=0)
+                    break ;
+            for(int i=0;i<(int)cipher.size();i++)
+                cipher[i] ^= plain[i] ;
+            break ;
+        default:
+            throw(std::string("Not implemented.")) ;
+            break ;
+    }
+
+    return cipher ;
+}
+
+std::vector<uint8_t> BlockCipherAdapter::Decode(std::vector<uint8_t> cipher) throw(std::string)
+{
+    //XXX: Leave this cause not used in this project
+    throw(std::string("Not implemented.")) ;
+
+    return cipher ;
+}
+

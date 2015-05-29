@@ -1,10 +1,15 @@
 #include "gtest/gtest.h"
 
 #include "BlockCipher.h"
+#include "DRNG.h"
 
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <random>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 struct AESTestCase
 {
@@ -135,21 +140,64 @@ TEST(AESTest, BlockSize)
 
 TEST(RNGTester, BadRNG)
 {
+    struct badRNG : public DRNG
+    {
+        void Reseed(std::string) {}
+        private:
+            uint64_t _Next()
+            {
+                return (uint64_t) sqrt(rand()) ;
+            } 
+            uint64_t _max()
+            {
+                return (uint64_t) sqrt(RAND_MAX) ;
+            }
+            uint64_t _min()
+            {
+                return 0 ;
+            
+
+    } bad ;
+
+    RNGTester tester ;
+    ASSERT_EQ(tester.Test(&bad), false) ;
+}
+
+TEST(RNGTester, NULLTest)
+{
+    RNGTester tester ;
+    ASSERT_THROW(tester.Test(NULL), std::string) ;
 }
 
 TEST(RNGTester, GoodRNG)
 {
+    struct goodRNG : public DRNG
+    {
+        void Reseed(std::string) {}
+        private:
+            uint64_t _Next()
+            {
+                return (uint64_t) rand() ;
+            } 
+            uint64_t _max()
+            {
+                return (uint64_t) RAND_MAX ;
+            }
+            uint64_t _min()
+            {
+                return 0 ;
+            }
+    } good ;
+
+    RNGTester tester ;
+    ASSERT_EQ(tester.Test(&good), false) ;
 }
 
-TEST(DRNG, Randomness)
+TEST(AESDRNG, MinMaxValues)
 {
 }
 
-TEST(DRNG, MinMaxValues)
-{
-}
-
-TEST(DRNG, RandomnessAfterReseed)
+TEST(AESDRNG, SeedConsistency)
 {
 }
 

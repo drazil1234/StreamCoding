@@ -9,8 +9,8 @@ all: $(OBJS)
 
 test: RNGTest
 
-RNGTest: RNGTest.cpp gtest.o BlockCipher.o
-	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) RNGTest.cpp BlockCipher.o -o RNGTest
+RNGTest: RNGTest.cpp gtest.o BlockCipher.o hash.o
+	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) RNGTest.cpp BlockCipher.o hash.o -o RNGTest
 
 runtest: test
 	./RNGTest

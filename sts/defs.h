@@ -22,7 +22,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #define ALPHA							0.01	/* SIGNIFICANCE LEVEL */
-#define MAXNUMOFTEMPLATES				148		/* APERIODIC TEMPLATES: 148=>temp_length=9 */
+#define MAXNUMOFTEMPLATES				300		/* APERIODIC TEMPLATES: 148=>temp_length=9 */
 #define NUMOFTESTS						15		/* MAX TESTS DEFINED  */
 #define NUMOFGENERATORS					10		/* MAX PRNGs */
 #define MAXFILESPERMITTEDFORPARTITION	148

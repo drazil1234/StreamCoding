@@ -189,22 +189,20 @@ TEST(SHA256Test, HashTest)
   ASSERT_EQ(hash::SHA256(input), expected_output) ;
 }
 
-/*
 TEST(RNGTester, BadRNG)
 {
   struct badRNG : public DRNG
   {
-    void Reseed(std::string) {}
-    private:
-    uint64_t _Next()
+    protected:
+    uint64_t operator()()
     {
       return (uint64_t) sqrt(rand()) ;
     } 
-    uint64_t _max()
+    uint64_t max()
     {
       return (uint64_t) sqrt(RAND_MAX) ;
     }
-    uint64_t _min()
+    uint64_t min()
     {
       return 0 ;
     }         
@@ -220,6 +218,7 @@ TEST(RNGTester, NULLTest)
   ASSERT_THROW(tester.Test(NULL), std::string) ;
 }
 
+/*
 TEST(RNGTester, GoodRNG)
 {
   struct goodRNG : public DRNG

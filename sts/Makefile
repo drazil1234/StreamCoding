@@ -9,7 +9,12 @@ OBJS=frequency.o cephes.o blockFrequency.o runs.o longestRunOfOnes.o matrix.o ra
 
 .PHONY=clean
 
-all: $(OBJS)
+all: rngtest.o
+
+rngtest.o: $(OBJS)
+	ld -r $(OBJS) -o rngtest.o
+
+test: $(OBJS) test.cpp
 	$(CXX) $(CXXFLAGS) test.cpp $(OBJS) -o test
 
 #omit some deps here cause this is third party lib

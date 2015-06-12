@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cmath>
 #include <random>
+#include <iostream>
+#include <iomanip>
 
 bool RNGTester::Test(DRNG *rng) throw(std::string)
 {
@@ -17,6 +19,8 @@ bool RNGTester::Test(DRNG *rng) throw(std::string)
   unsigned char *eps = new unsigned char[MY_N] ;
   for(int i=0;i<MY_N;i++)
     eps[i] = rng->Next(0, 1) ;
+
+  std::cout << std::fixed << std::setprecision(6) ;
 
   p_value = std::min(p_value, Frequency(MY_N, eps) ) ;
   p_value = std::min(p_value, BlockFrequency(MY_N/100, MY_N, eps) ) ;
@@ -33,6 +37,10 @@ bool RNGTester::Test(DRNG *rng) throw(std::string)
   p_value = std::min(p_value, CumulativeSums(MY_N, eps) ) ;
   p_value = std::min(p_value, RandomExcursions(MY_N, eps) ) ;
   p_value = std::min(p_value, RandomExcursionsVariant(MY_N, eps) ) ;
+
+  std::cout << "p_value = " << p_value << std::endl ;
+
+  delete []eps ;
 
   return (p_value>=0.01) ; 
 }

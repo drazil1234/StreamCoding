@@ -218,31 +218,30 @@ TEST(RNGTester, NULLTest)
   ASSERT_THROW(tester.Test(NULL), std::string) ;
 }
 
-/*
 TEST(RNGTester, GoodRNG)
 {
   struct goodRNG : public DRNG
   {
-    void Reseed(std::string) {}
-    private:
-    uint64_t _Next()
+    protected:
+    uint64_t operator()()
     {
       return (uint64_t) rand() ;
     } 
-    uint64_t _max()
+    uint64_t max()
     {
       return (uint64_t) RAND_MAX ;
     }
-    uint64_t _min()
+    uint64_t min()
     {
       return 0 ;
     }
   } good ;
 
   RNGTester tester ;
-  ASSERT_EQ(tester.Test(&good), false) ;
+  ASSERT_EQ(tester.Test(&good), true) ;
 }
 
+/*
 TEST(AESDRNG, MinMaxValues)
 {
 }

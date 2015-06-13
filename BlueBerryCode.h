@@ -1,6 +1,7 @@
 #pragma once
 #include<vector>
 #include<map>
+#include<cstdint>
 
 class BlueBerryCode
 {
@@ -9,6 +10,6 @@ class BlueBerryCode
         uint64_t Decode(uint64_t x) ;
     
     private:
-        uint64_t S = 1<<62;
-        uint64_t L = S<<1;    
+        //uint64_t S = 1ull<<62;
+        //uint64_t L = S<<1;    
 } ;

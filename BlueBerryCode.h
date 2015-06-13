@@ -1,9 +1,15 @@
 #pragma once
+#include<vector>
+#include<map>
+#include<cstdint>
 
 class BlueBerryCode
 {
     public :
-        BlueBerryCode(uint32_t S, uint32_t L) ;
-        uint32_t Encode(uint32_t x, uint64_t seed) ;
-        uint32_t Decode(uint32_t x, uint64_t seed) ;
+        uint64_t Encode(uint64_t x) ;
+        uint64_t Decode(uint64_t x) ;
+    
+    private:
+        //uint64_t S = 1ull<<62;
+        //uint64_t L = S<<1;    
 } ;

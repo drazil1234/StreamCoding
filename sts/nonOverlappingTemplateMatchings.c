@@ -26,7 +26,7 @@ double NonOverlappingTemplateMatchings(int m, int n, unsigned char *epsilon)
 	char			directory[100];
 	unsigned char		*sequence = NULL;
 
-	N = 8;
+	N = 20;
 	M = n/N;
 
   if ( (Wj = (unsigned int*)calloc(N, sizeof(unsigned int))) == NULL ) {

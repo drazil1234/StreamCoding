@@ -9,10 +9,6 @@
 struct DeterministicRandomNumberGenerator
 {
     uint64_t Next(uint64_t lb, uint64_t ub) ;
-    virtual void Reseed(std::string seed) throw(std::string)
-    {
-      throw(std::string("Not implemented/supported. seed=") + seed) ;
-    }
     virtual ~DeterministicRandomNumberGenerator() {} ;
     protected:
         DeterministicRandomNumberGenerator() {} //prevent auto-gen
@@ -28,16 +24,20 @@ typedef DeterministicRandomNumberGenerator DRNG ;
 
 struct AESCTRDRBG : public DRNG
 {
-    AESCTRDRBG(std::string seed) throw(std::string) ;
-    void Reseed(std::string seed) throw(std::string) ;
-    protected:
-        uint64_t min() ;
-        uint64_t max() ;
-        uint64_t operator()() ;
+  AESCTRDRBG(std::string seed, std::string personalize) ;
+  std::vector<uint8_t> GetBits(uint64_t n) ;
+  private:
+    void _Update(std::vector<uint8_t> data) ;
+    std::vector<uint8_t> _Key, _V ;
+    std::vector<uint8_t> _BlockEncrypt(std::vector<uint8_t> key, std::vector<uint8_t> v) ;
+  protected:
+    uint64_t min() ;
+    uint64_t max() ;
+    uint64_t operator()() ;
 } ;
 
 struct RNGTester
 {
-    bool Test(DRNG *rng) throw(std::string) ;
+  bool Test(DRNG *rng) throw(std::string) ;
 } ;
 

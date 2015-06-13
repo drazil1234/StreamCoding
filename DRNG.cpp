@@ -110,32 +110,40 @@ bool RNGTester::Test(DRNG *rng) throw(std::string)
   if(rng==NULL)
     throw(std::string("RNG cannot be NULL.")) ;
 
-  double p_value = 1.0 ;
   unsigned char *eps = new unsigned char[MY_N] ;
   for(int i=0;i<MY_N;i++)
     eps[i] = rng->Next(0, 1) ;
 
+  bool res = this->Test(eps, MY_N) ;
+  
+  delete []eps ;
+
+  return res ;
+}
+
+bool RNGTester::Test(unsigned char *eps, int n)
+{
+  double p_value = 1.0 ;
+
   std::cout << std::fixed << std::setprecision(6) ;
 
-  p_value = std::min(p_value, Frequency(MY_N, eps) ) ;
-  p_value = std::min(p_value, BlockFrequency(MY_N/100, MY_N, eps) ) ;
-  p_value = std::min(p_value, Runs(MY_N, eps) ) ;
-  p_value = std::min(p_value, LongestRunOfOnes(MY_N, eps) ) ;
-  //p_value = std::min(p_value, Rank(MY_N, eps) ) ;
-  //p_value = std::min(p_value, DiscreteFourierTransform(MY_N, eps) ) ;
-  //p_value = std::min(p_value, NonOverlappingTemplateMatchings(10, MY_N, eps) ) ;
-  //p_value = std::min(p_value, OverlappingTemplateMatchings(10, MY_N, eps) ) ;
-  p_value = std::min(p_value, Universal(MY_N, eps) ) ;
-  p_value = std::min(p_value, LinearComplexity(1000, MY_N, eps) ) ;
-  p_value = std::min(p_value, Serial(5, MY_N, eps) ) ;
-  //p_value = std::min(p_value, ApproximateEntropy(5, MY_N, eps) ) ;
-  p_value = std::min(p_value, CumulativeSums(MY_N, eps) ) ;
-  //p_value = std::min(p_value, RandomExcursions(MY_N, eps) ) ;
-  //p_value = std::min(p_value, RandomExcursionsVariant(MY_N, eps) ) ;
+  p_value = std::min(p_value, Frequency(n, eps) ) ;
+  p_value = std::min(p_value, BlockFrequency(n/100, n, eps) ) ;
+  p_value = std::min(p_value, Runs(n, eps) ) ;
+  p_value = std::min(p_value, LongestRunOfOnes(n, eps) ) ;
+  //p_value = std::min(p_value, Rank(n, eps) ) ;
+  //p_value = std::min(p_value, DiscreteFourierTransform(n, eps) ) ;
+  //p_value = std::min(p_value, NonOverlappingTemplateMatchings(10, n, eps) ) ;
+  //p_value = std::min(p_value, OverlappingTemplateMatchings(10, n, eps) ) ;
+  p_value = std::min(p_value, Universal(n, eps) ) ;
+  p_value = std::min(p_value, LinearComplexity(1000, n, eps) ) ;
+  p_value = std::min(p_value, Serial(5, n, eps) ) ;
+  //p_value = std::min(p_value, ApproximateEntropy(5, n, eps) ) ;
+  p_value = std::min(p_value, CumulativeSums(n, eps) ) ;
+  //p_value = std::min(p_value, RandomExcursions(n, eps) ) ;
+  //p_value = std::min(p_value, RandomExcursionsVariant(n, eps) ) ;
 
   std::cout << "p_value = " << p_value << std::endl ;
-
-  delete []eps ;
 
   return (p_value>=0.01) ; 
 }

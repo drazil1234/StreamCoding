@@ -241,15 +241,49 @@ TEST(RNGTester, GoodRNG)
   ASSERT_EQ(tester.Test(&good), true) ;
 }
 
-/*
-TEST(AESDRNG, MinMaxValues)
+TEST(AESCTRDRNG, RandomNess)
 {
+  AESCTRDRBG rng("strong_seed", "stronger_seed") ;
+  RNGTester tester ;
+  ASSERT_EQ(tester.Test(&rng), true) ;
 }
 
-TEST(AESDRNG, SeedConsistency)
+TEST(AESCTRDRNG, SeedConsistency)
 {
+  AESCTRDRBG rng1("seed1", "seed1") ;
+  AESCTRDRBG rng2("seed1", "seed1") ;
+  AESCTRDRBG rng3("seed2", "seed1") ;
+  AESCTRDRBG rng4("seed1", "seed2") ;
+  AESCTRDRBG rng5("seed2", "seed2") ;
+  AESCTRDRBG rng6("seed2", "seed2") ;
+
+  std::vector<uint8_t> bits[6] ;
+  for(int r=0;r<5;r++)
+  {
+    std::vector<uint8_t> tmp ;
+    tmp = rng1.GetBits(128) ;
+    bits[0].insert(bits[0].end(), tmp.begin(), tmp.end()) ;
+    tmp = rng2.GetBits(128) ;
+    bits[1].insert(bits[1].end(), tmp.begin(), tmp.end()) ;
+    tmp = rng3.GetBits(128) ;
+    bits[2].insert(bits[2].end(), tmp.begin(), tmp.end()) ;
+    tmp = rng4.GetBits(128) ;
+    bits[3].insert(bits[3].end(), tmp.begin(), tmp.end()) ;
+    tmp = rng5.GetBits(128) ;
+    bits[4].insert(bits[4].end(), tmp.begin(), tmp.end()) ;
+    tmp = rng6.GetBits(128) ;
+    bits[5].insert(bits[5].end(), tmp.begin(), tmp.end()) ;
+  }
+
+  ASSERT_EQ(bits[0], bits[1]) ;
+  ASSERT_EQ(bits[4], bits[5]) ;
+  ASSERT_NE(bits[1], bits[2]) ;
+  ASSERT_NE(bits[1], bits[3]) ;
+  ASSERT_NE(bits[1], bits[4]) ;
+  ASSERT_NE(bits[2], bits[3]) ;
+  ASSERT_NE(bits[2], bits[4]) ;
+  ASSERT_NE(bits[3], bits[4]) ;
 }
-*/
 
 int main(int argc, char **argv)
 {

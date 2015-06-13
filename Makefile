@@ -7,13 +7,17 @@ GTESTFLAGS = gtest.o -lpthread
 
 all: $(OBJS)
 
-test: RNGTest
+test: RNGTest TreeCodeTest
+
+TreeCodeTest: TreeCode.o TreeCodeTest.cpp DRNG.o sts/rngtest.o BlockCipher.o hash.o
+	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) TreeCodeTest.cpp DRNG.o sts/rngtest.o BlockCipher.o hash.o TreeCode.o -o TreeCodeTest
 
 RNGTest: RNGTest.cpp gtest.o BlockCipher.o hash.o sts/rngtest.o DRNG.o
 	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) RNGTest.cpp BlockCipher.o hash.o DRNG.o sts/rngtest.o -o RNGTest
 
 runtest: test
-	./RNGTest
+	./TreeCodeTest
+	#./RNGTest
 
 gtest.o: gtest/gtest-all.cc gtest/gtest.h
 	$(CXX) $(CXXFLAGS) -isystem . -pthread gtest/gtest-all.cc -c -o gtest.o
@@ -26,4 +30,5 @@ sts/rngtest.o: sts/rngtest.h
 
 clean:
 	-rm *.o
-	-rm  RNGTest
+	-rm RNGTest
+	-rm TreeCodeTest

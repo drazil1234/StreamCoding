@@ -39,5 +39,6 @@ struct AESCTRDRBG : public DRNG
 struct RNGTester
 {
   bool Test(DRNG *rng) throw(std::string) ;
+  bool Test(unsigned char *eps, int n) ;
 } ;
 

@@ -4,18 +4,30 @@
 
 #define TREECODE_D 2
 #define TREECODE_S 63
+#define TREECODE_ALPHA 0.2
 
 #include <string>
 #include <cstdint>
 
 struct TreeCodeNode
 {
-  TreeCodeNode(AESCTRDRBG* rng) ;
+  TreeCodeNode(std::string seed) ;
   uint64_t GetLabel(uint64_t branch) throw(std::string) ;
   TreeCodeNode *GetNode(uint64_t branch) throw(std::string) ;
+  ~TreeCodeNode() ;
   private :
     void _GenerateNodes() ;
-    AESCTRDRBG *_rng ;
+    AESCTRDRBG _rng ;
     TreeCodeNode *_ptr[TREECODE_D] ;
     uint64_t _label[TREECODE_D] ;
 } ;
+
+struct TreeCodeEncoder
+{
+  TreeCodeEncoder(std::string seed) ;
+  ~TreeCodeEncoder() ;
+  uint64_t Encode(uint64_t data) throw(std::string) ;
+  private :
+    TreeCodeNode *_head, *_cur ;
+} ;
+

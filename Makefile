@@ -7,7 +7,7 @@ GTESTFLAGS = gtest.o -lpthread
 
 all: $(OBJS)
 
-test: RNGTest TreeCodeTest blueberrytest
+test: RNGTest TreeCodeTest BlueBerryTest
 
 TreeCodeTest: TreeCode.o TreeCodeTest.cpp DRNG.o sts/rngtest.o BlockCipher.o hash.o
 	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) TreeCodeTest.cpp DRNG.o sts/rngtest.o BlockCipher.o hash.o TreeCode.o -o TreeCodeTest
@@ -20,7 +20,7 @@ runtest: test
 	./RNGTest
 	./BlueBerryTest
 
-blueberrytest: BlueBerryTest.cpp gtest.o BlueBerryCode.o
+BlueBerryTest: BlueBerryTest.cpp gtest.o BlueBerryCode.o
 	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) BlueBerryTest.cpp BlueBerryCode.o -o BlueBerryTest 
 
 gtest.o: gtest/gtest-all.cc gtest/gtest.h

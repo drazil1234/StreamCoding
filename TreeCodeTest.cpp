@@ -14,7 +14,7 @@
 
 TEST(TreeCodeNodeTest, RangeTest)
 {
-  TreeCodeNode node(new AESCTRDRBG("123e;lkjsdffpogih24r;lkahsdf;oiefdkqjewr","asdfoi3rdfiadf;knx/zxvkln2p3")) ;
+  TreeCodeNode node("asdfoi3rdfiadf;knx/zxvkln2p3") ;
   ASSERT_THROW(node.GetLabel(2), std::string) ;
   ASSERT_THROW(node.GetNode(2), std::string) ;
 }
@@ -49,10 +49,18 @@ std::vector<uint8_t> GetBits(TreeCodeNode *node, int n)
   return bits ;
 }
 
+TEST(TreeCodeNodeTest, FunctionalTest)
+{
+  TreeCodeNode *ptr ;
+  ASSERT_NO_THROW(ptr = new TreeCodeNode("2134shd;fsdf2RAsf23$@WAFSDvoz 134sdf")) ;
+  ASSERT_NO_THROW(GetBits(ptr, 10000)) ;
+  ASSERT_NO_THROW(delete ptr) ;
+}
+
 TEST(TreeCodeNodeTest, RandomNess)
 {
   int n = 7000000 ;
-  TreeCodeNode *ptr = new TreeCodeNode(new AESCTRDRBG("sdofij3ijt2;kjfas;dfivdf0b244rlkjdf0bi qwer 23dfas''zx234", "asf2329asdvpe32143-z@#$1asd")) ;
+  TreeCodeNode *ptr = new TreeCodeNode("sdofij3ijt2;kjfas;dfivdf0b244rlkjdf0bi qwer 23dfas''zx234") ;
   std::vector<uint8_t> bits = GetBits(ptr, n) ;
   RNGTester tester ;
   ASSERT_EQ(true, tester.Test(bits.data(), n)) ;

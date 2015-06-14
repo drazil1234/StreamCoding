@@ -9,9 +9,13 @@ all: $(OBJS)
 
 test: RNGTest TreeCodeTest BlueBerryTest NoiseTest
 
-NoiseTest: Socket.o 
+NoiseTest: Socket.o Noise NoiseTest.cpp gtest.o
+	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) NoiseTest.cpp Socket.o -o NoiseTest
 
-TreeCodeTest: TreeCode.o TreeCodeTest.cpp DRNG.o sts/rngtest.o BlockCipher.o hash.o
+Noise: Noise.cpp Socket.o DRNG.o BlockCipher.o hash.o sts/rngtest.o
+	$(CXX) $(CXXFLAGS) Noise.cpp Socket.o DRNG.o BlockCipher.o hash.o sts/rngtest.o -o Noise
+
+TreeCodeTest: TreeCode.o TreeCodeTest.cpp gtest.o DRNG.o sts/rngtest.o BlockCipher.o hash.o
 	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) TreeCodeTest.cpp DRNG.o sts/rngtest.o BlockCipher.o hash.o TreeCode.o -o TreeCodeTest
 
 RNGTest: RNGTest.cpp gtest.o BlockCipher.o hash.o sts/rngtest.o DRNG.o

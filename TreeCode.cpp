@@ -70,7 +70,7 @@ void findNearest(TreeCodeNode **_nodes, uint64_t *_ans, uint64_t *_label, uint64
 
 const std::vector<uint64_t> &TreeCodeDecoder::Decode(uint64_t data) throw(std::string)
 {
-  if(data >= (1ULL<<TREECODE_S))
+  if(data > (1ULL<<TREECODE_S))
     throw(std::string("data out of range")) ;
 
   this->_input.push_back(data) ;

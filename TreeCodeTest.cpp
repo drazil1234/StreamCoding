@@ -105,7 +105,9 @@ TEST(TreeCode, ErrorCorrection1)
   {
     uint64_t bit = rand()%2 ;
     data.push_back(bit) ;
+    //uint64_t end = enc.Encode(bit)^((r<5)?rand()%(1ULL<<TREECODE_S):0);
     const std::vector<uint64_t> &ans = dec.Decode(enc.Encode(bit)^((r<5)?rand()%(1ULL<<TREECODE_S):0)) ;
+    //const std::vector<uint64_t> &ans = dec.Decode(end);
     if(r==99)
       ASSERT_EQ(data, ans) ;
   }

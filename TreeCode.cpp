@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-
 #include "DRNG.h"
 
 TreeCodeDecoder::TreeCodeDecoder(std::string seed)
@@ -84,16 +83,15 @@ const std::vector<uint64_t> &TreeCodeDecoder::Decode(uint64_t data) throw(std::s
       this->_label.push_back(data) ;
       return this->_decoded ;
     }
-
   this->_decoded.push_back(0) ;
   this->_path.push_back(cur->GetNode(0)) ;
   this->_label.push_back(0) ;
   std::vector<uint64_t> error ;
   for(uint64_t i=0;i<this->_label.size();i++)
     error.push_back((this->_label[i]==this->_input[i])?0:1) ;
-  for(uint64_t i=error.size()-2;i+1>=1;i--)
-    error[i] += error[i+1] ;
-
+  if(error.size()>=2U)
+      for(uint64_t i=0;i<error.size()-1;i++)
+    	  error[error.size()-i-2] += error[error.size()-i-1] ;
   uint64_t ptr = error.size()-1 ;
   for(uint64_t i=0;i<error.size();i++)
     if(error[i]>TREECODE_ALPHA*(error.size()-i)/2)
@@ -101,10 +99,8 @@ const std::vector<uint64_t> &TreeCodeDecoder::Decode(uint64_t data) throw(std::s
       ptr = i ;
       break ;
     }
- 
   if(ptr!=error.size()-1)
     findNearest(this->_path.data()+ptr, this->_decoded.data()+ptr, this->_label.data()+ptr, this->_input.data()+ptr, this->_input.size()-ptr) ;
-
   return this->_decoded ;
 }
 

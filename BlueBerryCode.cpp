@@ -7,7 +7,7 @@ uint64_t BlueBerryCode::Encode(uint64_t x)
 }
 uint64_t BlueBerryCode::Decode(uint64_t x)
 {
-    if(x%2==1)return 1;
+    if(x%2==1)return 1ull<<63;
     else return x>>1; 
 }
     

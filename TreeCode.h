@@ -4,7 +4,7 @@
 
 #define TREECODE_D 2
 #define TREECODE_S 63
-#define TREECODE_ALPHA 0.2
+#define TREECODE_ALPHA 0.5
 
 #include <string>
 #include <cstdint>
@@ -29,5 +29,17 @@ struct TreeCodeEncoder
   uint64_t Encode(uint64_t data) throw(std::string) ;
   private :
     TreeCodeNode *_head, *_cur ;
+} ;
+
+struct TreeCodeDecoder
+{
+  TreeCodeDecoder(std::string seed) ;
+  ~TreeCodeDecoder() ;
+  const std::vector<uint64_t> &Decode(uint64_t data) throw(std::string) ;
+  private:
+    std::vector<TreeCodeNode *> _path ;
+    std::vector<uint64_t> _decoded ;
+    std::vector<uint64_t> _label ;
+    std::vector<uint64_t> _input ;
 } ;
 

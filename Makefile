@@ -17,8 +17,8 @@ RNGTest: RNGTest.cpp gtest.o BlockCipher.o hash.o sts/rngtest.o DRNG.o
 
 runtest: test
 	./TreeCodeTest
-	./RNGTest
-	./BlueBerryTest
+	#./RNGTest
+	#./BlueBerryTest
 
 BlueBerryTest: BlueBerryTest.cpp gtest.o BlueBerryCode.o
 	$(CXX) $(CXXFLAGS) $(GTESTFLAGS) BlueBerryTest.cpp BlueBerryCode.o -o BlueBerryTest 

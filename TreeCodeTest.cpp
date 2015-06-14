@@ -77,7 +77,8 @@ TEST(TreeCode, RangeTest)
   TreeCodeDecoder dec("The seed of the test of the TreeCode") ;
 
   ASSERT_THROW(enc.Encode(2), std::string) ;
-  ASSERT_THROW(dec.Decode(1ULL<<63), std::string) ;
+  ASSERT_NO_THROW(dec.Decode(1ULL<<63)) ;
+  ASSERT_THROW(dec.Decode((1ULL<<63)+1), std::string) ;
 }
 
 TEST(TreeCode, Funtional)

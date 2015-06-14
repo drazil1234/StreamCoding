@@ -17,8 +17,8 @@ TEST(blueberrycode,Decode)
     EXPECT_EQ(0ull,BBC.Decode(0));
     EXPECT_EQ(2ull,BBC.Decode(4));
     std::cout << "error check: 1 & 3" << std::endl;
-    EXPECT_EQ(1ull,BBC.Decode(1));
-    EXPECT_EQ(1ull,BBC.Decode(3));
+    EXPECT_EQ(1ull<<63,BBC.Decode(1));
+    EXPECT_EQ(1ull<<63,BBC.Decode(3));
     std::cout << "big number: 1<<63: " << std::endl; 
     EXPECT_EQ(1ull<<62,BBC.Decode(1ull<<63));
     std::cout << "(1<<63)-1 : 18446744073709551614" << std::endl;

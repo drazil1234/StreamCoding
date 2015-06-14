@@ -67,6 +67,11 @@ void findNearest(TreeCodeNode **_nodes, uint64_t *_ans, uint64_t *_label, uint64
   delete []L ;
 }
 
+const std::vector<uint64_t> &TreeCodeDecoder::GetDecoded()
+{
+  return this->_decoded ;
+}
+
 const std::vector<uint64_t> &TreeCodeDecoder::Decode(uint64_t data) throw(std::string)
 {
   if(data > (1ULL<<TREECODE_S))

@@ -1,11 +1,11 @@
 CXX = clang++
 CXXFLAGS = -Wall -Wextra -std=c++11 -O2
-OBJS = 
+OBJS = Socket.o DRNG.o sts/rngtest.o hash.o BlockCipher.o BlueBerryCode.o TreeCode.o
 GTESTFLAGS = gtest.o -lpthread
 
 .PHONY: clean runtest
 
-all: $(OBJS)
+all: $(OBJS) core Noise
 
 test: RNGTest TreeCodeTest BlueBerryTest NoiseTest
 
@@ -36,6 +36,9 @@ gtest.o: gtest/gtest-all.cc gtest/gtest.h
 sts/rngtest.o: sts/rngtest.h
 	$(MAKE) -C sts
 
+core: core.cpp $(OBJS)
+	$(CXX) $(CXXFLAGS) core.cpp $(OBJS) -o core
+
 %.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<
 
@@ -43,4 +46,6 @@ clean:
 	-rm *.o
 	-rm RNGTest
 	-rm TreeCodeTest
-	-rm  BlueBerryTest
+	-rm BlueBerryTest
+	-rm NoiseTest
+	-rm core

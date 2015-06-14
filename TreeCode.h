@@ -35,6 +35,7 @@ struct TreeCodeDecoder
 {
   TreeCodeDecoder(std::string seed) ;
   ~TreeCodeDecoder() ;
+  const std::vector<uint64_t> &GetDecoded() ;
   const std::vector<uint64_t> &Decode(uint64_t data) throw(std::string) ;
   private:
     std::vector<TreeCodeNode *> _path ;

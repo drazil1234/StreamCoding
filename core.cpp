@@ -14,9 +14,10 @@
 #include <vector>
 #include <algorithm>
 
-int c0 = 10 ;
+int c0 = 20 ;
 int c1 = 2 ;
-int maxN = 1024*1024 ;
+int maxN = 4*1024 ;
+int EncodeR = 0, DecodeR = 0 ;
 
 void Encode()
 {
@@ -33,6 +34,8 @@ void Encode()
 
   for(int n=1;n<=maxN;n++)
   {
+    while(DecodeR+2<n) usleep(200) ;
+    EncodeR = n ;
     uint8_t bit = rand()&1 ;
     f << (int)bit ;
     data.push_back(bit) ;
@@ -54,7 +57,7 @@ void Encode()
 
     for(int r=0;r<c0;r++)
     {
-      int curK = rng.Next(0, maxK) ;
+      int curK = rng.Next(0, maxK-1) ;
       uint64_t cw = code[curK]->Encode((pos[curK]>=0)?data[pos[curK]--]:0) ;
       cw = bc.Encode(cw) ;
       std::vector<uint8_t> vec ;
@@ -82,12 +85,14 @@ void Decode()
 
   int maxK = 0 ;
   std::vector<TreeCodeDecoder *> code ;
-  std::vector<int64_t> pos ;
+  std::vector<int64_t> pos, len ;
   BlueBerryCode bc ;
   std::vector<uint8_t> data ;
 
   for(int n=1;n<=maxN;n++)
   {
+    while(EncodeR+2<n) usleep(200) ;
+    DecodeR = n ;
     data.push_back(0) ;
     if(n==1 || n/log2(n)>maxK+1)
     {
@@ -102,6 +107,7 @@ void Decode()
       }
       code.push_back(new TreeCodeDecoder(seed)) ;
       pos.push_back(n-1) ;
+      len.push_back(0) ;
       maxK++ ;
     }
     for(int r=0;r<c0;r++)
@@ -112,21 +118,25 @@ void Decode()
       for(int i=7;i>=0;i--)
         cw = (cw<<8) | buf[i] ;
       cw = bc.Decode(cw) ;
-      int curK = rng.Next(0, maxK) ;
+      int curK = rng.Next(0, maxK-1) ;
       code[curK]->Decode(cw) ;
+      len[curK]++ ;
     }
 
     for(int i=0;i<maxK;i++)
     {
-      int64_t valid = std::min(pos[i]+1, (int64_t)floor(c1*log2(n))) ;
+      int64_t valid = std::min(len[i], std::min(pos[i]+1, (int64_t)floor(c1*log2(n)))) ;
       const std::vector<uint64_t> decoded = code[i]->GetDecoded() ;
       for(int64_t j=0;j<valid;j++)
         data[pos[i]-j] = decoded[j] ;
     }
-  }
 
-  for(auto bit: data)
-    f << (int)bit ;
+    for(int i=0;i<n;i++)
+      f << (int)data[i] ;
+
+    if(n%1024==0)
+      printf("End of Decode round %d\n",n) ;
+  }
 
   f.close() ;
   for(auto ptr: code)
@@ -145,20 +155,36 @@ int main(void)
   //statistic here
   std::fstream c("correct.txt", std::ios::in) ;
   std::fstream d("decoded.txt", std::ios::in) ;
+  std::fstream rp("report.txt", std::ios::out | std::ios::trunc) ;
 
   int cnt = 0 ;
+  std::vector<char> ans ;
   for(int n=0;n<maxN;n++)
   {
-    char cc, cd ;
-    c >> cc ;
-    d >> cd ;
-    if(cc!=cd) break ;
-    else cnt++ ;
+    char tmp ;
+    c >> tmp ;
+    ans.push_back(tmp) ;
+  }
+  for(int n=0;n<maxN;n++)
+  {
+    int mycnt = 0 ;
+    bool good = true ;
+    for(int i=0;i<=n;i++)
+    {
+      char tmp ;
+      d >> tmp ;
+      if(good && ans[i]==tmp)
+        mycnt++ ;
+      else good = false ;
+    }
+    rp << n+1 << ", " << mycnt << std::endl ;
+    cnt = mycnt ;
   }
   printf("We decoded %d prefix correctly.\n", cnt) ;
 
   c.close() ;
   d.close() ;
+  rp.close() ;
 
   return 0 ;
 }

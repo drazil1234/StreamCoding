@@ -19,6 +19,7 @@ Socket::Socket(std::string ip, int port)
   clientService.sin_addr.s_addr = inet_addr(ip.c_str());
   clientService.sin_port = htons(port); 
   connect(this->_fd, (struct sockaddr *) & clientService, sizeof (clientService)) ;
+  perror("connect") ;
 }
 
 Socket::Socket(int port)
@@ -30,13 +31,16 @@ Socket::Socket(int port)
   service.sin_addr.s_addr = inet_addr("127.0.0.1") ;
   service.sin_port = htons(port) ;
   bind(s, (struct sockaddr *) &service, sizeof (service)) ;
+  perror("bind") ;
   listen(s, 3) ;
+  perror("listen") ;
 
   socklen_t addr_len ;
   struct sockaddr addr ;
 
   addr_len = sizeof(struct sockaddr) ;
   this->_fd = accept(s,&addr,&addr_len) ;
+  perror("accept") ;
 
   shutdown(s, SHUT_RDWR) ;
   close(s) ;

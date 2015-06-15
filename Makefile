@@ -37,7 +37,7 @@ sts/rngtest.o: sts/rngtest.h
 	$(MAKE) -C sts
 
 core: core.cpp $(OBJS)
-	$(CXX) $(CXXFLAGS) core.cpp $(OBJS) -o core
+	$(CXX) $(CXXFLAGS) core.cpp -pthread $(OBJS) -o core
 
 %.o: %.cpp %.h
 	$(CXX) $(CXXFLAGS) -c -o $@ $<

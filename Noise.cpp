@@ -10,7 +10,6 @@
 int main(void)
 {
   Socket in(9090) ;
-  sleep(1) ;
   Socket out(9091) ;
   AESCTRDRBG rng("This is an init string for the destroyer!", "Q@#R)FADS12va#Radsf ascqw3rAW$q wv0sdR") ;
 

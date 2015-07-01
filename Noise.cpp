@@ -19,7 +19,10 @@ int main(void)
     if(!in.Recv(1, buf)) break ;
     for(int i=0;i<8;i++)
       if(rng.Next(0, ERROR_RATE-1)==0)
+      {
+        printf("mess up a bit\n") ;
         buf[0] ^= (1<<i) ;
+      }
     if(!out.Send(buf)) break ;
   }
 
